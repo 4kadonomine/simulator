@@ -1,0 +1,572 @@
+'''
+簡易スペック
+Pアズールレーン THE ANIMATION
+7R大当り確率 約1/499.9
+RUSH突入率 約61%
+RUSH平均継続率   約90%
+引き戻し成功率 約41%
+賞球数 1＆3＆6＆14＆15
+'''
+
+import random
+import sys
+import matplotlib.pyplot as plt
+import pandas as pd
+
+def merge(arr, l, m, r):
+    n1 = m - l + 1
+    n2 = r - m
+
+    L = [arr[l + i] for i in range(n1)]
+    R = [arr[m + 1 + i] for i in range(n2)]
+
+    i = j = 0
+    k = l
+
+    while i < n1 and j < n2:
+        if L[i] <= R[j]:
+            arr[k] = L[i]
+            i += 1
+        else:
+            arr[k] = R[j]
+            j += 1
+        k += 1
+
+    while i < n1:
+        arr[k] = L[i]
+        i += 1
+        k += 1
+
+    while j < n2:
+        arr[k] = R[j]
+        j += 1
+        k += 1
+
+def merge_sort(arr, l, r):
+    if l < r:
+        m = (l + r) // 2
+        merge_sort(arr, l, m)
+        merge_sort(arr, m + 1, r)
+        merge(arr, l, m, r)
+
+
+def binary_search(data, value):
+    left = 0            # 探索する範囲の左端を設定
+    right = len(data) - 1            # 探索する範囲の右端を設定
+    while left <= right:
+        mid = (left + right) // 2            # 探索する範囲の中央を計算
+        if data[mid] == value:
+            # 中央の値と一致した場合は位置を返す
+            return mid
+        elif data[mid] < value:
+            # 中央の値より大きい場合は探索範囲の左を変える
+            left = mid + 1
+        else:
+            # 中央の値より小さい場合は探索範囲の右を変える
+            right = mid - 1
+    return -1            # 見つからなかった場合
+
+def main():
+    #time.sleep(7)
+    A = [] #通常
+    B = [] #確変
+
+    A_7rB = []  #rush
+    A_7rBA = [] #7r潜伏確変
+    A_7rA = []  #7r通常
+    A_2rA = []  #2r通常
+
+    B_7rB = []  #rush
+    B_7rBA = [] #7r潜伏確変
+    B_7rA = []  #7r通常
+    B_2rA = []  #2r通常
+
+    tokuzu2 = []
+
+    gift = [] #明石ギフトの合計
+
+
+    #通常
+    while len(A) < 1425: #1/46
+        n = random.randint(1, 65536)
+        if not n in A:
+            A.append(n)
+    merge_sort(A,0,len(A)-1)
+
+    #確変
+    while len(B) < 1598: #1/41
+        n = random.randint(1, 65536)
+        if not n in B and not n in A:
+            B.append(n)
+    merge_sort(B,0,len(B)-1)
+
+
+    #抽選
+    #特図１−A
+    #rush
+    while len(A_7rB) < 650:
+        n = random.randint(1, 65000)
+        if not n in A_7rB:
+            A_7rB.append(n)
+    merge_sort(A_7rB,0,len(A_7rB)-1)
+
+    #7r潜確
+    while len(A_7rBA) < 4030:
+        n = random.randint(1, 65000)
+        if not n in A_7rBA and not n in A_7rB:
+            A_7rBA.append(n)
+    merge_sort(A_7rBA,0,len(A_7rBA)-1)
+
+    #7r通
+    while len(A_7rA) < 715:
+        n = random.randint(1, 65000)
+        if not n in A_7rA and not n in A_7rBA and not n in A_7rB:
+            A_7rA.append(n)
+    merge_sort(A_7rA,0,len(A_7rA)-1)
+
+    #2r通
+    while len(A_2rA) < 715:
+        n = random.randint(1, 65000)
+        if not n in A_2rA and not n in A_7rA and not n in A_7rBA and not n in A_7rB:
+            A_2rA.append(n)
+    merge_sort(A_2rA,0,len(A_2rA)-1)
+
+
+
+    #特図１ーB
+    #rush
+    while len(B_7rB) < 3510:
+        n = random.randint(1, 65000)
+        if not n in B_7rB:
+            B_7rB.append(n)
+    merge_sort(B_7rB,0,len(B_7rB)-1)
+
+    #7r潜確
+    while len(B_7rBA) < 1170:
+        n = random.randint(1, 65000)
+        if not n in B_7rBA and not n in B_7rB:
+            B_7rBA.append(n)
+    merge_sort(B_7rBA,0,len(B_7rBA)-1)
+
+    #7r通
+    while len(B_7rA) < 715:
+        n = random.randint(1, 65000)
+        if not n in B_7rA and not n in B_7rBA and not n in B_7rB:
+            B_7rA.append(n)
+    merge_sort(B_7rA,0,len(B_7rA)-1)
+
+    #2r通
+    while len(B_2rA) < 715:
+        n = random.randint(1, 65000)
+        if not n in B_2rA and not n in B_7rA and not n in B_7rBA and not n in B_7rB:
+            B_2rA.append(n)
+    merge_sort(B_2rA,0,len(B_2rA)-1)
+
+
+    #特図２
+    #1/3で確変
+    while len(tokuzu2) < 16700:
+        n = random.randint(1, 55444)
+        if not n in tokuzu2:
+            tokuzu2.append(n)
+    merge_sort(tokuzu2,0,len(tokuzu2)-1)
+
+    tf = 0 #二分探索で見つかったか否かを
+    kaiten_ts = 0 #初当りまでの回転数
+    cnt_ts = 0    #初当り回数
+    cnt_rush = 0  #ラッシュ回数
+    cnt_sum = 0   #合計出玉
+    flg_yu = 0    #遊タイムフラグ、初当り間１度のみの発動
+    complete = 0  #コンプ回数
+    flg_AB = 0    #0は通常(A)、１は確変(B)
+
+    #初期設定
+    loop = 20
+    border = 14
+
+    #17・・・14.7回/1k
+    #16・・・15.6
+    #15・・・16.7
+#----ボーダー16.8-----
+    #14・・・17.9
+    #13・・・19.2
+    #12・・・20.9
+    #11・・・22.7
+
+    ts = [0 for i in range(loop)]
+    res = [0 for i in range(loop)]
+    count_sum = [i for i in range(loop*2+1)]
+    gift = [i for i in range(loop)]
+
+
+    #初当りloop回まで
+    while cnt_ts < loop:
+        flg_toku2 = 0
+        flg_break = 0
+        flg_rush = 0
+        flg_A = 0   #１で当たり　抽選へ
+        flg_B = 0   #１で当たり　抽選へ
+        flg_7r = 0
+
+        cnt_big = 0  #
+        cnt_gift = 0 #
+
+        #図柄揃い(7r当たり)まで
+        while flg_7r == 0:
+            kaiten = 0
+            #特図１ーA(通常)
+            if flg_AB == 0:
+                flg_break = 0
+                while flg_A == 0:
+                    cnt_sum -= border
+                    rd = random.randint(1,65536)
+                    kaiten += 1
+                    kaiten_ts += 1
+                    tf = binary_search(A, rd)
+                    if tf != -1:
+                        flg_A = 1
+                        flg_break = 1
+                        break
+                if flg_break == 0:
+                    if kaiten == 136 and flg_yu == 0: #遊タイム
+                        flg_yu = 1
+                        kaiten = 0
+                        while flg_A == 0:
+                            cnt_sum -= 1
+                            rd = random.randint(1,65536)
+                            kaiten += 1
+                            kaiten_ts += 1
+                            tf = binary_search(A, rd)
+                            if tf != -1:
+                                cnt_ts += 1
+                                flg_AB = 2 #遊タイム当たりは、いきなりラッシュの振り分けに行かせる
+                                flg_rush = 1
+                                flg_break = 1
+                                flg_yu = 0
+                                flg_toku2 = 1
+                                ts[cnt_ts-1] = kaiten_ts
+                                count_sum[cnt_ts*2-1] = cnt_sum
+                                break
+                if flg_break == 0:
+                    if kaiten >= 178 or flg_yu == 1:
+                        while flg_A == 0:
+                                cnt_sum -= border
+                                rd = random.randint(1,65536)
+                                kaiten += 1
+                                kaiten_ts += 1
+                                tf = binary_search(A, rd)
+                                if tf != -1:
+                                    flg_A = 1
+                                    break
+
+            #特図１ーB(潜伏確変)
+            if flg_AB == 1:
+                while flg_B == 0:
+                    cnt_sum -= border
+                    rd = random.randint(1,65536)
+                    kaiten_ts += 1
+                    tf = binary_search(B, rd)
+                    if tf != -1:
+                        flg_B = 1
+                        break
+
+
+            #低確ギフト
+            if flg_A == 1:
+                flg_break = 0
+                rd = random.randint(1,65536)
+                tf = binary_search(A_7rB, rd) #rush
+                if tf != -1:
+                    flg_7r = 1
+                    flg_rush = 1
+                    cnt_big += 470
+                    flg_break = 1
+                    cnt_ts += 1
+                    ts[cnt_ts-1] = kaiten_ts
+                    kaiten_ts = 0
+                    flg_A = 0
+                    flg_AB = 1
+                    flg_yu = 0
+                    count_sum[cnt_ts*2-1] = cnt_sum
+                    cnt_gift += 1
+                    gift[cnt_ts-1] = cnt_gift
+
+                if flg_break == 0: #確単
+                    tf = binary_search(A_7rBA, rd)
+                    if tf != -1:
+                        flg_7r = 1
+                        flg_AB = 1
+                        flg_break = 1
+                        cnt_ts += 1
+                        ts[cnt_ts-1] = kaiten_ts
+                        kaiten_ts = 0
+                        flg_A = 0
+                        count_sum[cnt_ts*2-1] = cnt_sum
+                        cnt_sum += 470
+                        count_sum[cnt_ts*2] = cnt_sum
+                        cnt_gift += 1
+                        gift[cnt_ts-1] = cnt_gift
+
+                if flg_break == 0: #通単
+                    tf = binary_search(A_7rA, rd)
+                    if tf != -1:
+                        flg_7r = 1
+                        flg_AB = 0
+                        flg_break = 1
+                        cnt_ts += 1
+                        ts[cnt_ts-1] = kaiten_ts
+                        kaiten_ts = 0
+                        flg_A = 0
+                        count_sum[cnt_ts*2-1] = cnt_sum
+                        cnt_sum += 470
+                        count_sum[cnt_ts*2] = cnt_sum
+                        cnt_gift += 1
+                        gift[cnt_ts-1] = cnt_gift
+
+                if flg_break == 0: #通gift
+                    tf = binary_search(A_2rA, rd)
+                    if tf != -1:
+                        flg_AB = 0
+                        cnt_sum += 78
+                        flg_break = 1
+                        flg_A = 0
+                        cnt_gift += 1
+
+                if flg_break == 0: #gift
+                    flg_AB = 1
+                    cnt_sum += 78
+                    flg_A = 0
+                    cnt_gift += 1
+
+            #潜確ギフト
+            if flg_B == 1:
+                flg_break = 0
+                rd = random.randint(1,65536)
+                tf = binary_search(B_7rB, rd)
+                if tf != -1:#rush
+                    flg_7r = 1
+                    flg_rush = 1
+                    flg_break = 1
+                    cnt_ts += 1
+                    ts[cnt_ts-1] = kaiten_ts
+                    kaiten_ts = 0
+                    flg_B = 0
+                    flg_AB = 1
+                    count_sum[cnt_ts*2-1] = cnt_sum
+                    cnt_sum += 470
+                    count_sum[cnt_ts*2] = cnt_sum
+                    cnt_gift += 1
+                    gift[cnt_ts-1] = cnt_gift
+
+                if flg_break == 0: #確単
+                    tf = binary_search(B_7rBA, rd)
+                    if tf != -1:
+                        flg_7r = 1
+                        flg_AB = 1
+                        flg_break = 1
+                        cnt_ts += 1
+                        ts[cnt_ts-1] = kaiten_ts
+                        kaiten_ts = 0
+                        flg_B = 0
+                        count_sum[cnt_ts*2-1] = cnt_sum
+                        cnt_sum += 470
+                        count_sum[cnt_ts*2] = cnt_sum
+                        cnt_gift += 1
+                        gift[cnt_ts-1] = cnt_gift
+
+                if flg_break == 0: #通単
+                    tf = binary_search(B_7rA, rd)
+                    if tf != -1:
+                        flg_7r = 1
+                        flg_AB = 0
+                        flg_break = 1
+                        cnt_ts += 1
+                        ts[cnt_ts-1] = kaiten_ts
+                        kaiten_ts = 0
+                        flg_B = 0
+                        count_sum[cnt_ts*2-1] = cnt_sum
+                        cnt_sum += 470
+                        count_sum[cnt_ts*2] = cnt_sum
+                        cnt_gift += 1
+                        gift[cnt_ts-1] = cnt_gift
+
+                if flg_break == 0: #通gift
+                    tf = binary_search(B_2rA, rd)
+                    if tf != -1:
+                        flg_AB = 0
+                        cnt_sum += 78
+                        flg_break = 1
+                        flg_B = 0
+                        cnt_gift += 1
+
+                if flg_break == 0: #gift
+                    flg_AB = 1
+                    cnt_sum += 78
+                    flg_B = 0
+                    cnt_gift += 1
+
+
+        #ss rush
+        while flg_rush == 1:
+            flg_A = 0
+            flg_B = 0
+            flg_break = 0
+            kaiten = 0
+            flg_toku2 = 0
+
+            if cnt_big >= 95000:
+                flg_rush = 0
+                res[cnt_ts-1] = cnt_big
+                cnt_sum += cnt_big
+                count_sum[cnt_ts*2] = cnt_sum
+                cnt_big = 0
+                complete += 1
+                break
+
+            if flg_AB == 0: #時短
+                while kaiten <= 90:
+                    cnt_big -= 1
+                    rd = random.randint(1,65536)
+                    kaiten += 1
+                    tf = binary_search(A, rd)
+                    if tf != -1:
+                        flg_toku2 = 1
+                        flg_break = 1
+                        break
+
+                if flg_break == 0:
+                    while kaiten <= 136: #ループチャンス
+                        cnt_big -= border
+                        rd = random.randint(1,65536)
+                        kaiten += 1
+                        tf = binary_search(A, rd)
+                        if tf != -1:
+                            flg_A = 1
+                            break
+
+                    #低確ギフト
+                    if flg_A == 1:
+                        rd = random.randint(1,65536)
+                        tf = binary_search(A_7rB, rd)#rush
+                        if tf != -1:
+                            cnt_big += 470
+                            flg_break = 1
+
+                        if flg_break == 0: #確単
+                            tf = binary_search(A_7rBA, rd)
+                            if tf != -1:
+                                flg_AB = 1
+                                cnt_big += 470
+                                res[cnt_ts-1] = cnt_big
+                                cnt_sum += cnt_big
+                                count_sum[cnt_ts*2] = cnt_sum
+                                break
+
+                        if flg_break == 0: #通単
+                            tf = binary_search(A_7rA, rd)
+                            if tf != -1:
+                                flg_AB = 0
+                                cnt_big += 470
+                                res[cnt_ts-1] = cnt_big
+                                cnt_sum += cnt_big
+                                count_sum[cnt_ts*2] = cnt_sum
+                                break
+
+                        if flg_break == 0: #通gift
+                            tf = binary_search(A_2rA, rd)
+                            if tf != -1:
+                                flg_AB = 0
+                                cnt_big += 78
+                                res[cnt_ts-1] = cnt_big
+                                cnt_sum += cnt_big
+                                count_sum[cnt_ts*2] = cnt_sum
+                                break
+
+                        if flg_break == 0: #gift
+                            flg_AB = 1
+                            cnt_big += 78
+                            res[cnt_ts-1] = cnt_big
+                            cnt_sum += cnt_big
+                            count_sum[cnt_ts*2] = cnt_sum
+                            break
+
+                    if kaiten >= 136: #遊タイム
+                        flg_yu = 1
+                        while kaiten <= 314:
+                            cnt_big -= 1
+                            rd = random.randint(1,65536)
+                            kaiten += 1
+                            tf = binary_search(A, rd)
+                            if tf != -1:
+                                flg_toku2 = 1
+                                flg_break = 1
+                                flg_yu = 0
+                                break
+
+                        if flg_break == 0:
+                            flg_rush = 0
+                            res[cnt_ts-1] = cnt_big
+                            cnt_sum += cnt_big
+                            count_sum[cnt_ts*2] = cnt_sum
+                            cnt_big = 0
+
+            if flg_AB == 1:
+                while flg_B == 0:
+                    cnt_sum -= 1
+                    rd = random.randint(1,65536)
+                    tf = binary_search(B, rd)
+                    if tf != -1:
+                        flg_B = 1
+                        flg_toku2 = 1
+
+            if flg_toku2 == 1:
+                rd = random.randint(1,65536)
+                tf = binary_search(tokuzu2, rd)
+                if tf != -1:
+                    cnt_big += 630 #確変
+                    flg_AB = 1
+                else:
+                    cnt_big += 630 #時短
+                    flg_AB = 0
+
+    max_res = 0
+    max_ts = 0
+    max_gift = 0
+    for x in range(loop):
+        if res[x] > max_res:
+            max_res = res[x]
+        if ts[x] > max_ts:
+            max_ts = ts[x]
+        if gift[x] > max_gift:
+            max_gift = gift[x]
+
+    ts_ave = sum(ts)/loop
+
+    #stop()
+    #distance()
+    print("初当り")
+    print(ts)
+    print("当たりまでのギフト数")
+    print(gift)
+    print("出玉")
+    print(res)
+    print("結果")
+    print(cnt_sum)
+    print("コンプ回数")
+    print(complete)
+    print("最高一撃出玉")
+    print(max_res)
+    print("最高嵌り")
+    print(max_ts)
+    print("最高ギフト嵌り")
+    print(max_gift)
+    print("平均初当たり")
+    print(ts_ave)
+    x = [i for i in range(loop*2+1)]
+    fig, ax = plt.subplots()
+    ax.plot(x, count_sum)
+    plt.show()
+
+
+
+main()
